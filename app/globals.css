@@ -1,0 +1,381 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 270 70% 8%;
+    --foreground: 0 0% 98%;
+    --card: 270 50% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 270 50% 12%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 280 80% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 270 40% 20%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 270 30% 25%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 320 70% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 270 30% 25%;
+    --input: 270 30% 25%;
+    --ring: 280 80% 65%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body {
+    background: linear-gradient(135deg, #1a0033 0%, #3d0066 50%, #6a1b9a 100%);
+    @apply min-h-screen text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+  }
+}
+
+/* =====================================================
+   Square Drawing Co. — Game styles (ported from HTML)
+   ===================================================== */
+.game {
+  max-width: 780px;
+  width: 100%;
+  background: rgba(20, 0, 40, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.logo { font-size: 12px; font-weight: 600; letter-spacing: 1px; color: #c4a5ff; }
+.score-label { font-size: 13px; color: #c4a5ff; }
+.progress {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #a855f7, #ec4899);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+h1.game-title { font-size: 36px; margin-bottom: 12px; line-height: 1.2; }
+h2.game-q { font-size: 22px; margin-bottom: 20px; line-height: 1.3; }
+p.scenario {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 16px 18px;
+  border-left: 3px solid rgba(168, 85, 247, 0.6);
+  border-radius: 8px;
+}
+.options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.option {
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.option:hover:not(.disabled) {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: rgba(168, 85, 247, 0.5);
+  transform: translateY(-1px);
+}
+.option.correct { background: rgba(16, 185, 129, 0.2); border-color: #10b981; }
+.option.wrong { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+.option.disabled { cursor: not-allowed; }
+.feedback {
+  margin-top: 20px;
+  padding: 22px;
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.65;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.feedback .label {
+  font-weight: 600; color: #c4a5ff; margin-bottom: 6px;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+}
+.feedback .concept { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: #fff; }
+.btn-primary {
+  padding: 14px 32px;
+  background: linear-gradient(90deg, #a855f7, #ec4899);
+  border: none; border-radius: 10px; color: #fff;
+  font-size: 16px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; font-family: inherit;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4); }
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  gap: 12px;
+}
+.btn-back {
+  padding: 12px 22px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+.intro-title {
+  font-size: 42px; margin-bottom: 10px;
+  background: linear-gradient(90deg, #c4a5ff, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.intro-tagline { font-size: 18px; color: rgba(255, 255, 255, 0.7); margin-bottom: 28px; }
+.intro-desc {
+  background: rgba(255, 255, 255, 0.05); padding: 24px;
+  border-radius: 12px; line-height: 1.7; margin-bottom: 24px; font-size: 16px;
+}
+.intro-desc strong { color: #c4a5ff; }
+.start-btn {
+  padding: 16px 40px;
+  background: linear-gradient(90deg, #a855f7, #ec4899);
+  border: none; border-radius: 10px; color: #fff;
+  font-size: 17px; font-weight: 600; cursor: pointer;
+  font-family: inherit; transition: all 0.2s;
+}
+.start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4); }
+.results { text-align: center; padding: 12px 0; }
+.big-score {
+  font-size: 80px; font-weight: 700;
+  background: linear-gradient(90deg, #c4a5ff, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px; line-height: 1;
+}
+.verdict { font-size: 20px; margin-bottom: 28px; color: rgba(255, 255, 255, 0.9); }
+.glossary {
+  text-align: left; background: rgba(255, 255, 255, 0.05);
+  padding: 24px; border-radius: 12px; margin-bottom: 24px;
+}
+.glossary h3 { margin-bottom: 16px; color: #c4a5ff; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+.glossary-item { margin-bottom: 14px; line-height: 1.55; font-size: 15px; }
+.glossary-item strong { color: #c4a5ff; }
+
+/* =====================================================
+   Animation scenes (above each scenario)
+   ===================================================== */
+.scene {
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(236, 72, 153, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  margin-bottom: 20px;
+  font-size: 52px;
+  position: relative;
+  overflow: hidden;
+  padding: 12px;
+}
+.scene .arrow { font-size: 28px; opacity: 0.6; }
+.scene .tag {
+  position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+  font-size: 10px; color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase; letter-spacing: 1.5px; white-space: nowrap;
+}
+
+@keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes pulseScale { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); filter: drop-shadow(0 0 14px rgba(168, 85, 247, 0.7)); } }
+@keyframes shrinkLoop { 0%, 25% { transform: scale(1); } 55%, 75% { transform: scale(0.45); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes popResult { 0%, 40% { opacity: 0; transform: scale(0); } 50% { opacity: 1; transform: scale(1.4); } 70%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes flicker { 0%, 100% { opacity: 1; } 30% { opacity: 0.3; } 60% { opacity: 1; } }
+@keyframes wobble { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+@keyframes glow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.5) drop-shadow(0 0 18px gold); } }
+@keyframes shake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-4deg) translateX(-3px); } 75% { transform: rotate(4deg) translateX(3px); } }
+@keyframes flowRight { 0% { transform: translateX(-50px); opacity: 0; } 30%, 70% { opacity: 1; } 100% { transform: translateX(50px); opacity: 0; } }
+@keyframes cascadeIn { 0%, 25% { opacity: 0; transform: scale(0); } 35% { opacity: 1; transform: scale(1.3); } 55%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes appearLate { 0%, 50% { opacity: 0; transform: scale(0); } 65% { opacity: 1; transform: scale(1.3); } 85%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes assembleIn {
+  0% { opacity: 0; transform: translateX(-60px) scale(0.4); }
+  30%, 70% { opacity: 1; transform: translateX(0) scale(1); }
+  85% { transform: translateX(80px) scale(0.4); opacity: 0; }
+  100% { opacity: 0; transform: translateX(80px) scale(0); }
+}
+@keyframes boxPop { 0%, 75% { transform: scale(1); } 85% { transform: scale(1.35); filter: drop-shadow(0 0 18px #a855f7); } 100% { transform: scale(1); } }
+@keyframes planeFly { 0% { transform: translateX(-50px); } 100% { transform: translateX(50px); } }
+
+/* Scene 1 — Direct Tool (modern calculator) */
+.s1 .ceo { animation: floatY 2s ease-in-out infinite; }
+.s1 .calc { animation: pulseScale 2s ease-in-out infinite 0.3s; display: inline-flex; align-items: center; }
+.s1 .eq { font-size: 28px; opacity: 0.6; }
+.s1 .result { font-size: 38px; font-weight: 700; color: #10b981; animation: popResult 2s ease-in-out infinite; }
+
+/* Scene Agent vs Tool */
+.savt { flex-direction: column; height: auto; padding: 14px; gap: 10px; }
+.savt .row { display: flex; align-items: center; gap: 10px; width: 100%; justify-content: center; font-size: 30px; }
+.savt .tool-label, .savt .agent-label {
+  font-size: 10px; padding: 3px 8px; border-radius: 4px;
+  letter-spacing: 1px; font-weight: 700;
+}
+.savt .tool-label { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+.savt .agent-label { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+.savt .brain { animation: pulseScale 2s ease-in-out infinite; font-size: 28px; }
+.savt .fixed { font-size: 32px; }
+.savt .varies { font-size: 28px; animation: floatY 2s ease-in-out infinite; letter-spacing: 2px; }
+.savt .micro { font-size: 12px; opacity: 0.7; }
+.savt .arrow { font-size: 20px; }
+
+/* Scene 2 — Sub-contractor */
+.s2 .pile { animation: shrinkLoop 4s ease-in-out infinite; }
+.s2 .contractor { animation: floatY 2s ease-in-out infinite; font-size: 56px; }
+.s2 .summary { font-size: 44px; animation: appearLate 4s ease-in-out infinite; }
+
+/* Scene 3 — No memory between sub-agents */
+.s3 .cal { animation: pulseScale 3s ease-in-out infinite; font-size: 42px; }
+.s3 .riya-gone { font-size: 40px; opacity: 0.35; filter: grayscale(0.7); }
+.s3 .johnny { animation: wobble 1.2s ease-in-out infinite; font-size: 56px; }
+.s3 .q {
+  font-size: 44px; color: #ef4444;
+  animation: flicker 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.6));
+}
+.s3 .hourglass { font-size: 26px; opacity: 0.7; animation: floatY 2s ease-in-out infinite; }
+
+/* Scene 4 — Skill */
+.s4 .worker { animation: floatY 3s ease-in-out infinite; }
+.s4 .shelf { font-size: 48px; opacity: 0.85; }
+.s4 .book { animation: floatY 3s ease-in-out infinite 0.5s; font-size: 50px; }
+.s4 .bulb { animation: glow 2s ease-in-out infinite; font-size: 48px; }
+
+/* Scene 5 — Command (green button) */
+.s5 .button {
+  font-size: 56px; animation: pulseScale 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(16, 185, 129, 0.7));
+}
+.s5 .casc { font-size: 38px; opacity: 0; }
+.s5 .c1 { animation: cascadeIn 3s ease-in-out infinite 0.4s; }
+.s5 .c2 { animation: cascadeIn 3s ease-in-out infinite 0.9s; }
+.s5 .c3 { animation: cascadeIn 3s ease-in-out infinite 1.4s; }
+
+/* Scene 6 — Plugin Bundle */
+.s6 .box-ship { animation: floatY 3s ease-in-out infinite; font-size: 56px; }
+.s6 .contents {
+  font-size: 24px;
+  background: rgba(168, 85, 247, 0.2);
+  padding: 6px 12px; border-radius: 10px;
+  border: 1px dashed rgba(168, 85, 247, 0.5);
+}
+.s6 .plane { animation: planeFly 3s ease-in-out infinite; font-size: 40px; }
+.s6 .dest { animation: pulseScale 3s ease-in-out infinite 0.5s; font-size: 50px; }
+
+/* Scene 7 — Orchestrator */
+.s7 .order { font-size: 40px; animation: floatY 3s ease-in-out infinite; }
+.s7 .ceo { font-size: 60px; animation: pulseScale 2.5s ease-in-out infinite; }
+.s7 .workers { display: flex; flex-direction: column; gap: 4px; font-size: 32px; }
+.s7 .w { animation: floatY 2s ease-in-out infinite; }
+.s7 .w:nth-child(1) { animation-delay: 0s; }
+.s7 .w:nth-child(2) { animation-delay: 0.3s; }
+.s7 .w:nth-child(3) { animation-delay: 0.6s; }
+.s7 .out { font-size: 40px; animation: appearLate 4s ease-in-out infinite; }
+
+/* Scene 8 — Input Tokens */
+.s8 .words {
+  font-family: monospace; font-size: 14px; color: #a855f7;
+  white-space: nowrap; animation: flowRight 2.4s linear infinite;
+  background: rgba(168, 85, 247, 0.15); padding: 6px 10px; border-radius: 6px;
+}
+.s8 .w2 { animation-delay: 0.8s; }
+.s8 .w3 { animation-delay: 1.6s; }
+.s8 .brain { font-size: 60px; animation: pulseScale 2s ease-in-out infinite; }
+.s8 .counter {
+  font-size: 18px; color: #10b981; font-weight: 700;
+  background: rgba(16, 185, 129, 0.18); padding: 6px 14px; border-radius: 8px;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+.s8 .col { display: flex; flex-direction: column; gap: 6px; }
+
+/* Scene 9 — Output Tokens */
+.s9 .brain { font-size: 60px; animation: pulseScale 2s ease-in-out infinite; }
+.s9 .words {
+  font-family: monospace; font-size: 14px; color: #ec4899;
+  white-space: nowrap; animation: flowRight 2.4s linear infinite;
+  background: rgba(236, 72, 153, 0.15); padding: 6px 10px; border-radius: 6px;
+}
+.s9 .w2 { animation-delay: 0.8s; }
+.s9 .w3 { animation-delay: 1.6s; }
+.s9 .cost {
+  font-size: 18px; color: #ef4444; font-weight: 700;
+  background: rgba(239, 68, 68, 0.18); padding: 6px 14px; border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  animation: flicker 1.4s ease-in-out infinite;
+}
+.s9 .col { display: flex; flex-direction: column; gap: 6px; }
+
+/* Scene 10 — Comparison */
+.s10 { flex-direction: column; height: auto; padding: 14px; gap: 10px; }
+.s10 .row { display: flex; align-items: center; gap: 10px; width: 100%; justify-content: center; font-size: 30px; }
+.s10 .bad-label, .s10 .good-label { font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 1px; font-weight: 700; }
+.s10 .bad-label { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+.s10 .good-label { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+.s10 .crush { animation: shake 0.5s ease-in-out infinite; }
+.s10 .small { font-size: 20px; opacity: 0.8; }
+.s10 .arrow { font-size: 22px; opacity: 0.6; }
+.s10 .stack { font-size: 22px; }
+
+/* Scene MCP Server */
+.smcp .randall { font-size: 56px; animation: floatY 3s ease-in-out infinite; }
+.smcp .phone { font-size: 44px; animation: pulseScale 1.5s ease-in-out infinite; }
+.smcp .connections { display: flex; flex-direction: column; gap: 6px; }
+.smcp .ext {
+  font-size: 15px; background: rgba(168, 85, 247, 0.15);
+  padding: 5px 12px; border-radius: 8px;
+  border: 1px dashed rgba(168, 85, 247, 0.4);
+}
+.smcp .e1 { animation: cascadeIn 3s ease-in-out infinite 0s; opacity: 0; }
+.smcp .e2 { animation: cascadeIn 3s ease-in-out infinite 0.4s; opacity: 0; }
+.smcp .e3 { animation: cascadeIn 3s ease-in-out infinite 0.8s; opacity: 0; }
+
+/* Scene 11 — Plugin Assembly */
+.s11 .piece { font-size: 38px; opacity: 0; animation: assembleIn 4s ease-in-out infinite; }
+.s11 .p1 { animation-delay: 0s; }
+.s11 .p2 { animation-delay: 0.25s; }
+.s11 .p3 { animation-delay: 0.5s; }
+.s11 .p4 { animation-delay: 0.75s; }
+.s11 .arrow { opacity: 0.5; }
+.s11 .box-final { font-size: 60px; animation: boxPop 4s ease-in-out infinite; }
