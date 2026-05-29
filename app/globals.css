@@ -41,6 +41,11 @@
    ===================================================== */
 .dashboard { max-width: 1040px; width: 100%; padding: 24px 0 56px; }
 .dash-header { text-align: center; margin-bottom: 44px; }
+.dash-logo {
+  display: block; margin: 0 auto 20px;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(168, 85, 247, 0.35);
+}
 .dash-brand {
   font-size: 12px; font-weight: 700; letter-spacing: 2px;
   color: #c4a5ff; margin-bottom: 16px;

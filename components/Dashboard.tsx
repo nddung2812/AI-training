@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { lessons } from "@/lib/lessons";
 import { loadProgress, type ProgressMap } from "@/lib/progress";
@@ -21,6 +22,14 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <header className="dash-header">
+        <Image
+          src="/logo.png"
+          alt="Square Drawing Co."
+          width={72}
+          height={72}
+          className="dash-logo"
+          priority
+        />
         <div className="dash-brand">DRAWINGHUB · AI TRAINING</div>
         <h1 className="dash-title">Square Drawing Co. Academy</h1>
         <p className="dash-sub">
