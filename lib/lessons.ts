@@ -10,6 +10,9 @@ import { modelScenarios, modelGlossary } from "./lesson-models";
 import type { Scenario } from "./scenarios";
 import type { GlossaryEntry } from "./glossary";
 
+/** A reliable, external place to go deeper (shown on the results screen) */
+export type Source = { label: string; url: string };
+
 export type Lesson = {
   slug: string;
   /** Short number shown on the card, e.g. "01" */
@@ -21,6 +24,8 @@ export type Lesson = {
   icon: string;
   level: "Beginner" | "Intermediate" | "Advanced";
   durationMin: number;
+  /** Highlights high-impact, must-do lessons with a "Recommended" badge */
+  recommended?: boolean;
   /** Pills shown under the card title */
   topics: string[];
   /** Two-tone gradient used to accent the card */
@@ -33,6 +38,11 @@ export type Lesson = {
   // ── Game data ──
   scenarios: Scenario[];
   glossary: GlossaryEntry[];
+  // ── Optional results-screen extras (used by the Advanced track) ──
+  /** Concrete next actions — "try these this week" */
+  actions?: string[];
+  /** Authoritative links to go deeper */
+  sources?: Source[];
 };
 
 export const lessons: Lesson[] = [
@@ -45,6 +55,7 @@ export const lessons: Lesson[] = [
     icon: "🧠",
     level: "Beginner",
     durationMin: 5,
+    recommended: true,
     topics: ["Agents", "Tools", "Skills", "Plugins", "Tokens", "MCP"],
     accent: ["#a855f7", "#ec4899"],
     introTagline: "A 5-minute game to learn how AI agents actually work",
@@ -56,8 +67,48 @@ export const lessons: Lesson[] = [
     glossary: aiConceptGlossary,
   },
   {
-    slug: "desktop-app",
+    slug: "prompting",
     order: "02",
+    title: "How to Talk to Claude",
+    tagline:
+      "The #1 skill: context, examples, format, roles & iteration. Turn vague asks into great results.",
+    icon: "🗣️",
+    level: "Beginner",
+    durationMin: 5,
+    recommended: true,
+    topics: ["Context", "Examples", "Format", "Iterating", "Patterns"],
+    accent: ["#fb923c", "#f43f5e"],
+    introTagline: "A 5-minute game to write prompts that actually work",
+    introParagraph:
+      "Same Square Drawing Co., new skill. Randall keeps blaming the AI when really it's the brief. You'll watch vague asks flop and sharp ones shine, and learn the handful of habits that turn 'make something nice' into exactly what you wanted.",
+    learnList:
+      "giving context, showing examples, specifying format, setting a role, iterating, and reusable prompt patterns",
+    scenarios: promptingScenarios,
+    glossary: promptingGlossary,
+  },
+  {
+    slug: "choosing-a-model",
+    order: "03",
+    title: "Pick the Right Model",
+    tagline:
+      "Opus, Sonnet or Haiku? Match model to task for the best mix of quality, speed & cost.",
+    icon: "⚖️",
+    level: "Intermediate",
+    durationMin: 4,
+    recommended: true,
+    topics: ["Opus", "Sonnet", "Haiku", "Speed vs depth"],
+    accent: ["#fbbf24", "#fb923c"],
+    introTagline: "A 4-minute game on right-sizing the model",
+    introParagraph:
+      "Claude comes in a few sizes, and picking well saves both time and money. Randall learns when to bring out the heavyweight, when the balanced all-rounder is plenty, and when the fast little one wins — no overthinking required.",
+    learnList:
+      "the model family, Opus, Sonnet, Haiku, how model size meets token cost, and right-sizing",
+    scenarios: modelScenarios,
+    glossary: modelGlossary,
+  },
+  {
+    slug: "desktop-app",
+    order: "04",
     title: "The Claude Desktop App",
     tagline:
       "Chat, Cowork, or Code? Learn which mode fits each job — and when to spin up a Project.",
@@ -75,27 +126,8 @@ export const lessons: Lesson[] = [
     glossary: desktopGlossary,
   },
   {
-    slug: "prompting",
-    order: "03",
-    title: "How to Talk to Claude",
-    tagline:
-      "The #1 skill: context, examples, format, roles & iteration. Turn vague asks into great results.",
-    icon: "🗣️",
-    level: "Beginner",
-    durationMin: 5,
-    topics: ["Context", "Examples", "Format", "Iterating", "Patterns"],
-    accent: ["#fb923c", "#f43f5e"],
-    introTagline: "A 5-minute game to write prompts that actually work",
-    introParagraph:
-      "Same Square Drawing Co., new skill. Randall keeps blaming the AI when really it's the brief. You'll watch vague asks flop and sharp ones shine, and learn the handful of habits that turn 'make something nice' into exactly what you wanted.",
-    learnList:
-      "giving context, showing examples, specifying format, setting a role, iterating, and reusable prompt patterns",
-    scenarios: promptingScenarios,
-    glossary: promptingGlossary,
-  },
-  {
     slug: "context-memory",
-    order: "04",
+    order: "05",
     title: "Context & Memory",
     tagline:
       "Why long chats drift, when to start fresh, and how to keep Claude's working memory sharp.",
@@ -114,7 +146,7 @@ export const lessons: Lesson[] = [
   },
   {
     slug: "trust-verify",
-    order: "05",
+    order: "06",
     title: "Trust, but Verify",
     tagline:
       "Hallucinations, knowledge cutoffs & the verify habit — use AI fast without getting burned.",
@@ -133,7 +165,7 @@ export const lessons: Lesson[] = [
   },
   {
     slug: "data-safety",
-    order: "06",
+    order: "07",
     title: "Keep It Safe",
     tagline:
       "What's okay to share, what to anonymize, and how to grant the least access needed.",
@@ -152,7 +184,7 @@ export const lessons: Lesson[] = [
   },
   {
     slug: "files-and-tools",
-    order: "07",
+    order: "08",
     title: "Files, Tools & Deliverables",
     tagline:
       "Upload docs, connect your tools, and turn it all into polished artifacts you can actually use.",
@@ -168,25 +200,6 @@ export const lessons: Lesson[] = [
       "file uploads, structured extraction, connectors, artifacts, and matching the file job to the right mode",
     scenarios: filesScenarios,
     glossary: filesGlossary,
-  },
-  {
-    slug: "choosing-a-model",
-    order: "08",
-    title: "Pick the Right Model",
-    tagline:
-      "Opus, Sonnet or Haiku? Match model to task for the best mix of quality, speed & cost.",
-    icon: "⚖️",
-    level: "Intermediate",
-    durationMin: 4,
-    topics: ["Opus", "Sonnet", "Haiku", "Speed vs depth"],
-    accent: ["#fbbf24", "#fb923c"],
-    introTagline: "A 4-minute game on right-sizing the model",
-    introParagraph:
-      "Claude comes in a few sizes, and picking well saves both time and money. Randall learns when to bring out the heavyweight, when the balanced all-rounder is plenty, and when the fast little one wins — no overthinking required.",
-    learnList:
-      "the model family, Opus, Sonnet, Haiku, how model size meets token cost, and right-sizing",
-    scenarios: modelScenarios,
-    glossary: modelGlossary,
   },
 ];
 

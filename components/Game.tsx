@@ -7,7 +7,17 @@ import { saveProgress } from "@/lib/progress";
 
 type Phase = "intro" | "playing" | "results";
 
-export default function Game({ lesson }: { lesson: Lesson }) {
+export default function Game({
+  lesson,
+  backHref = "/",
+  backLabel = "All lessons",
+  kicker = "Lesson",
+}: {
+  lesson: Lesson;
+  backHref?: string;
+  backLabel?: string;
+  kicker?: string;
+}) {
   const { scenarios, glossary } = lesson;
   const [phase, setPhase] = useState<Phase>("intro");
   const [current, setCurrent] = useState(0);
@@ -47,12 +57,13 @@ export default function Game({ lesson }: { lesson: Lesson }) {
   if (phase === "intro") {
     return (
       <div className="game">
-        <Link href="/" className="back-link">
-          ← All lessons
+        <Link href={backHref} className="back-link">
+          ← {backLabel}
         </Link>
         <div>
           <div className="intro-eyebrow">
-            Lesson {lesson.order} · {lesson.level} · {lesson.durationMin} min
+            {kicker ? `${kicker} ${lesson.order}` : lesson.order} · {lesson.level} ·{" "}
+            {lesson.durationMin} min
           </div>
           <h1 className="intro-title">{lesson.title}</h1>
           <p className="intro-tagline">{lesson.introTagline}</p>
@@ -98,12 +109,39 @@ export default function Game({ lesson }: { lesson: Lesson }) {
               </div>
             ))}
           </div>
+
+          {lesson.actions && lesson.actions.length > 0 && (
+            <div className="results-block actions-block">
+              <h3>Try these this week</h3>
+              <ul className="action-list">
+                {lesson.actions.map((a) => (
+                  <li key={a}>{a}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {lesson.sources && lesson.sources.length > 0 && (
+            <div className="results-block sources-block">
+              <h3>Go deeper — reliable sources</h3>
+              <ul className="source-list">
+                {lesson.sources.map((s) => (
+                  <li key={s.url}>
+                    <a href={s.url} target="_blank" rel="noopener noreferrer">
+                      {s.label} <span className="ext">↗</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <div className="results-actions">
             <button className="start-btn" onClick={start}>
               Play again →
             </button>
-            <Link href="/" className="btn-back">
-              ← All lessons
+            <Link href={backHref} className="btn-back">
+              ← {backLabel}
             </Link>
           </div>
         </div>
@@ -120,7 +158,7 @@ export default function Game({ lesson }: { lesson: Lesson }) {
   return (
     <div className="game">
       <div className="game-header">
-        <Link href="/" className="logo logo-link">
+        <Link href={backHref} className="logo logo-link">
           ← {lesson.title.toUpperCase()}
         </Link>
         <div className="score-label">
