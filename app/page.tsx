@@ -1,9 +1,9 @@
-import Game from "@/components/Game";
+import Dashboard from "@/components/Dashboard";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <Game />
+    <main className="flex min-h-screen justify-center p-6">
+      <Dashboard />
     </main>
   );
 }

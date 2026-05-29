@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AI Training at DrawingHub",
+  title: "Square Drawing Co. Academy · DrawingHub AI Training",
   description:
-    "Square Drawing Co. — a 5-minute interactive game to learn how AI agents actually work.",
+    "Bite-sized, playful lessons that turn AI buzzwords into things you can actually use at work — from how agents work to mastering the Claude Desktop App.",
 };
 
 export default function RootLayout({
