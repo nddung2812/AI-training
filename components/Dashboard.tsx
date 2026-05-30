@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { lessons } from "@/lib/lessons";
 import { advancedLessons } from "@/lib/advanced";
+import { hasLab } from "@/lib/labs";
 import { loadProgress, type ProgressMap } from "@/lib/progress";
 
 type Tab = "lessons" | "advanced";
@@ -158,16 +159,19 @@ export default function Dashboard() {
       ) : (
         <>
           <p className="dash-tab-intro">
-            Past the basics? Same playable games, pitched at practitioners — the
-            patterns that turn Claude from a handy chatbot into real operating
-            leverage for the studio. Each one ends with practical actions to try
-            this week and reliable sources to go deeper.
+            Past the basics? Topics marked{" "}
+            <span className="inline-lab">🧪 Hands-on lab</span> drop you straight
+            into doing the work — ordering a real prompt, hunting a cache-buster,
+            dialing in the savings — with instant feedback. The rest are quick
+            concept playbooks while their labs get built.
           </p>
           <div className="lesson-grid">
             {advancedLessons.map((topic) => {
               const result = progress[topic.slug];
               const done = Boolean(result);
               const perfect = result && result.score === result.total;
+              const lab = hasLab(topic.slug);
+              const exerciseCount = result?.total;
               return (
                 <Link
                   key={topic.slug}
@@ -180,6 +184,10 @@ export default function Dashboard() {
                     } as React.CSSProperties
                   }
                 >
+                  {lab && (
+                    <span className="card-lab">🧪 Hands-on lab</span>
+                  )}
+
                   <div className="card-top">
                     <span className="card-icon">{topic.icon}</span>
                     <span className="card-order">{topic.order}</span>
@@ -200,9 +208,17 @@ export default function Dashboard() {
                     <div className="card-meta">
                       <span>{topic.level}</span>
                       <span className="dot">·</span>
-                      <span>{topic.durationMin} min</span>
-                      <span className="dot">·</span>
-                      <span>{topic.scenarios.length} scenarios</span>
+                      {lab ? (
+                        <span>
+                          {exerciseCount ?? 4} exercises
+                        </span>
+                      ) : (
+                        <>
+                          <span>{topic.durationMin} min</span>
+                          <span className="dot">·</span>
+                          <span>{topic.scenarios.length} scenarios</span>
+                        </>
+                      )}
                     </div>
                     {done ? (
                       <span className={`card-badge ${perfect ? "perfect" : ""}`}>
@@ -215,7 +231,14 @@ export default function Dashboard() {
                   </div>
 
                   <div className="card-cta">
-                    {done ? "Replay playbook" : "Play playbook"} →
+                    {lab
+                      ? done
+                        ? "Replay lab"
+                        : "Start lab"
+                      : done
+                        ? "Replay playbook"
+                        : "Play playbook"}{" "}
+                    →
                   </div>
                 </Link>
               );

@@ -729,3 +729,238 @@ p.scenario {
 .source-list a:hover { color: #fff; text-decoration: underline; }
 .source-list .ext { font-size: 12px; opacity: 0.7; }
 
+/* =====================================================
+   Hands-on Lab — learn → practice (exercises) → recap
+   ===================================================== */
+.lab {
+  max-width: 780px; width: 100%;
+  background: rgba(20, 0, 40, 0.5);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px; padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* Lab — learn stage */
+.lab-eyebrow {
+  font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: #c4a5ff; margin: 6px 0 14px;
+}
+.lab-hero { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+.lab-hero-icon {
+  font-size: 46px; line-height: 1;
+  filter: drop-shadow(0 4px 12px rgba(168, 85, 247, 0.4));
+}
+.lab-title {
+  font-size: 38px; line-height: 1.1; font-weight: 800;
+  background: linear-gradient(90deg, var(--accent-a, #c4a5ff), var(--accent-b, #ec4899));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.lab-whatyoudo {
+  font-size: 17px; line-height: 1.6; color: rgba(255, 255, 255, 0.82);
+  margin-bottom: 26px;
+}
+.lab-ideas {
+  display: grid; gap: 12px; margin-bottom: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.lab-idea {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 3px solid var(--accent-a, #a855f7);
+  border-radius: 12px; padding: 14px 16px;
+}
+.lab-idea-term { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.lab-idea-point { font-size: 13.5px; line-height: 1.5; color: rgba(255, 255, 255, 0.72); }
+.lab-note { font-size: 13px; color: rgba(255, 255, 255, 0.5); margin-top: 14px; }
+
+/* Exercise shell */
+.ex { animation: fadeIn 0.3s ease; }
+.ex-title { font-size: 22px; font-weight: 700; line-height: 1.25; margin-bottom: 8px; }
+.ex-prompt { font-size: 15.5px; line-height: 1.6; color: rgba(255, 255, 255, 0.82); margin-bottom: 20px; }
+.ex-body { margin-bottom: 16px; }
+.ex-controls { margin-top: 14px; }
+.ex-btn-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.ex-inline-wrong {
+  display: block; margin-bottom: 12px;
+  font-size: 14px; color: #fca5a5;
+  background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px; padding: 10px 14px;
+}
+.ex-hint { margin-top: 16px; }
+.ex-hint-btn {
+  background: none; border: none; cursor: pointer; font-family: inherit;
+  font-size: 13px; font-weight: 600; color: #c4a5ff; padding: 0;
+}
+.ex-hint-btn:hover { text-decoration: underline; }
+.ex-hint p { font-size: 14px; line-height: 1.55; color: rgba(255, 255, 255, 0.7); }
+.ex-hint-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  color: #c4a5ff; margin-right: 6px;
+}
+.ex-verdict {
+  margin-top: 4px; font-size: 15px; font-weight: 700;
+  display: inline-block; padding: 8px 16px; border-radius: 999px;
+}
+.ex-verdict.pass { background: rgba(16, 185, 129, 0.18); border: 1px solid rgba(16, 185, 129, 0.45); color: #6ee7b7; }
+.ex-verdict.reveal { background: rgba(245, 158, 11, 0.14); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
+
+/* Why-this-matters explanation */
+.ex-explain {
+  margin-top: 20px; padding: 20px 22px;
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 12px; animation: fadeIn 0.3s ease;
+}
+.ex-explain-label {
+  font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  color: #c4a5ff; margin-bottom: 8px;
+}
+.ex-explain p { font-size: 15px; line-height: 1.65; color: rgba(255, 255, 255, 0.9); }
+
+/* Exercise — Order */
+.order-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.order-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  cursor: grab;
+}
+.order-row:active { cursor: grabbing; }
+.order-row.stable { border-left: 3px solid #6ee7b7; }
+.order-row.volatile { border-left: 3px solid #fcd34d; }
+.order-row.in-prefix { background: rgba(16, 185, 129, 0.1); }
+.order-handle { color: rgba(255, 255, 255, 0.35); font-size: 16px; cursor: grab; }
+.order-main { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.order-label { font-size: 15px; font-weight: 600; color: #fff; }
+.order-sub { font-size: 12px; color: rgba(255, 255, 255, 0.5); }
+.order-tag {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+}
+.order-tag.stable { background: rgba(16, 185, 129, 0.18); color: #6ee7b7; }
+.order-tag.volatile { background: rgba(245, 158, 11, 0.18); color: #fcd34d; }
+.order-moves { display: flex; flex-direction: column; gap: 2px; }
+.order-moves button {
+  width: 26px; height: 18px; line-height: 1; font-size: 10px;
+  background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px; color: #fff; cursor: pointer; padding: 0;
+}
+.order-moves button:disabled { opacity: 0.3; cursor: not-allowed; }
+.order-moves button:not(:disabled):hover { background: rgba(168, 85, 247, 0.3); }
+.order-readout {
+  margin-top: 14px; font-size: 14px; padding: 12px 16px; border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.8);
+}
+.order-readout.ok { border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+.order-readout.bad { border-color: rgba(245, 158, 11, 0.4); color: #fcd34d; }
+.order-readout strong { color: #fff; }
+
+/* Exercise — Spot */
+.spot-doc {
+  display: flex; flex-direction: column; gap: 6px;
+  background: rgba(0, 0, 0, 0.25); border-radius: 12px; padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.spot-line {
+  display: flex; align-items: center; gap: 12px;
+  text-align: left; width: 100%; cursor: pointer;
+  padding: 10px 12px; border-radius: 8px;
+  background: transparent; border: 1px solid transparent;
+  font-family: inherit; transition: all 0.15s;
+}
+.spot-line:hover:not(:disabled) { background: rgba(168, 85, 247, 0.12); }
+.spot-line .spot-mark { color: #c4a5ff; font-size: 14px; }
+.spot-line code {
+  font-family: ui-monospace, monospace; font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.88);
+}
+.spot-line.picked { background: rgba(168, 85, 247, 0.18); border-color: rgba(168, 85, 247, 0.5); }
+.spot-line.is-culprit { background: rgba(16, 185, 129, 0.16); border-color: rgba(16, 185, 129, 0.5); }
+.spot-line.is-culprit .spot-mark { color: #6ee7b7; }
+.spot-line.mis-pick { background: rgba(239, 68, 68, 0.16); border-color: rgba(239, 68, 68, 0.5); }
+
+/* Exercise — Categorize */
+.cat-list { display: flex; flex-direction: column; gap: 8px; }
+.cat-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px 14px; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.cat-item.correct { border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.1); }
+.cat-item.incorrect { border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.1); }
+.cat-label { font-size: 15px; color: #fff; flex: 1; min-width: 140px; }
+.cat-buckets { display: flex; gap: 6px; flex-wrap: wrap; }
+.cat-pick {
+  font-size: 12.5px; font-weight: 600; padding: 7px 12px; border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.75); cursor: pointer; font-family: inherit;
+  transition: all 0.15s;
+}
+.cat-pick:hover:not(:disabled) { border-color: rgba(168, 85, 247, 0.5); color: #fff; }
+.cat-pick.on { background: rgba(168, 85, 247, 0.25); border-color: rgba(168, 85, 247, 0.6); color: #fff; }
+.cat-pick:disabled { cursor: default; }
+
+/* Exercise — Calc */
+.calc { display: flex; flex-direction: column; gap: 18px; }
+.calc-row { display: flex; flex-direction: column; gap: 8px; }
+.calc-name {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 14px; color: rgba(255, 255, 255, 0.8);
+}
+.calc-name em { font-style: normal; font-weight: 700; color: #fff; font-size: 16px; }
+.calc input[type="range"] {
+  width: 100%; accent-color: var(--accent-a, #a855f7); cursor: pointer;
+}
+.calc input[type="range"]:disabled { opacity: 0.5; }
+.calc-out { display: flex; gap: 12px; flex-wrap: wrap; }
+.calc-cost {
+  flex: 1; min-width: 140px;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px; padding: 12px 16px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.calc-cost-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255, 255, 255, 0.55); }
+.calc-cost-val { font-size: 22px; font-weight: 800; }
+.calc-cost-val.bad { color: #fca5a5; }
+.calc-cost-val.good { color: #6ee7b7; }
+.calc-bar-wrap { display: flex; flex-direction: column; gap: 8px; }
+.calc-bar-track {
+  position: relative; height: 14px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08); overflow: hidden;
+}
+.calc-bar-fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #fcd34d, #fb923c);
+  transition: width 0.15s ease;
+}
+.calc-bar-fill.hit { background: linear-gradient(90deg, #34d399, #10b981); }
+.calc-bar-target {
+  position: absolute; top: -3px; width: 2px; height: 20px;
+  background: #fff; opacity: 0.85;
+}
+.calc-savings { font-size: 15px; color: rgba(255, 255, 255, 0.85); }
+.calc-savings strong { font-size: 19px; color: #fff; }
+.calc-savings.hit { color: #6ee7b7; }
+.calc-savings.hit strong { color: #6ee7b7; }
+
+/* Dashboard — lab badge on advanced cards */
+.card-lab {
+  position: absolute; top: 14px; right: 14px; z-index: 2;
+  font-size: 10.5px; font-weight: 800; letter-spacing: 0.3px;
+  padding: 4px 10px; border-radius: 999px;
+  background: rgba(52, 211, 153, 0.16);
+  border: 1px solid rgba(52, 211, 153, 0.5);
+  color: #6ee7b7;
+}
+.lesson-card:has(.card-lab) .card-order { opacity: 0; }
+.inline-lab {
+  font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+  background: rgba(52, 211, 153, 0.16); border: 1px solid rgba(52, 211, 153, 0.45);
+  color: #6ee7b7; white-space: nowrap;
+}
+
