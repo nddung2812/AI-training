@@ -690,6 +690,8 @@ export const advancedLessons: Lesson[] = [
     ],
     sources: [
       { label: "Anthropic — Building effective agents", url: "https://www.anthropic.com/engineering/building-effective-agents" },
+      { label: "Anthropic — Building agents with the Claude Agent SDK", url: "https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk" },
+      { label: "Anthropic — Effective context engineering for AI agents", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" },
       { label: "Anthropic Docs — Tool use overview", url: "https://docs.claude.com/en/docs/agents-and-tools/tool-use/overview" },
     ],
   },
@@ -912,6 +914,7 @@ export const advancedLessons: Lesson[] = [
     sources: [
       { label: "Anthropic — Model Context Protocol (connect tools & data)", url: "https://www.anthropic.com/news/model-context-protocol" },
       { label: "Model Context Protocol — official site", url: "https://modelcontextprotocol.io" },
+      { label: "Anthropic — Building agents with the Claude Agent SDK (orchestrator & sub-agents)", url: "https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk" },
     ],
   },
 ];

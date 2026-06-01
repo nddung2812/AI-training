@@ -190,6 +190,116 @@ export const labs: Lab[] = [
       },
     ],
   },
+  {
+    slug: "agent-harness",
+    title: "The Agent Harness",
+    icon: "🦾",
+    accent: ["#14b8a6", "#3b82f6"],
+    whatYouDo:
+      "Build the real machinery that turns the model into a reliable worker: sort who runs each tool, stack the context window so it doesn't rot, hunt the thing clogging it, and set the guardrails — hands on, no slides.",
+    keyIdeas: [
+      {
+        term: "It runs a loop",
+        point:
+          "A harness repeats a cycle — gather context, take an action, check the result — instead of guessing a whole job in one shot. The loop is where reliability comes from.",
+      },
+      {
+        term: "Tools are the interface",
+        point:
+          "The model asks to use a tool; the harness runs it and hands back the result. Some tools run in your app, some on Anthropic's servers.",
+      },
+      {
+        term: "Context is finite",
+        point:
+          "Stuff too much in and recall rots. Keep durable stuff up top, fetch big things only when needed, and summarize old turns.",
+      },
+      {
+        term: "Guardrails are deterministic",
+        point:
+          "Safe actions auto-run; risky or irreversible ones hit a gate your code enforces — not the model's judgement — and wait for a human.",
+      },
+    ],
+    exercises: [
+      {
+        kind: "categorize",
+        id: "ah-tools",
+        title: "Who actually runs each tool?",
+        prompt:
+          "When Claude asks to use a tool, something has to execute it. Sort each one by where it runs.",
+        buckets: [
+          { id: "client", label: "🖥️ Runs in your app (client tool)" },
+          { id: "server", label: "☁️ Runs on Anthropic's servers (server tool)" },
+        ],
+        items: [
+          { id: "t1", label: "Your 'render a square' function", bucket: "client" },
+          { id: "t2", label: "Reading the studio's order database", bucket: "client" },
+          { id: "t3", label: "Web search", bucket: "server" },
+          { id: "t4", label: "Running code in a sandbox (code execution)", bucket: "server" },
+          { id: "t5", label: "Sending mail through your mailer", bucket: "client" },
+          { id: "t6", label: "Fetching a public web page (web fetch)", bucket: "server" },
+        ],
+        hint: "Anything that touches YOUR systems or private data has to run in your code. Anthropic-hosted tools like web search run on their side.",
+        explanation:
+          "The loop is the same either way: the model emits a tool-use request, something executes it, and a result goes back. Client tools (your render function, your database, your mailer) run in your code because only you can reach those systems — you build them. Server tools (web search, code execution, web fetch) run on Anthropic's infrastructure and just hand back the result. Knowing which is which tells you what you have to build versus what you get for free.",
+      },
+      {
+        kind: "order",
+        id: "ah-context",
+        title: "Stack the context window",
+        prompt:
+          "A harness assembles a fresh context window each turn. Order it so the durable parts stay on top and the per-turn parts sit at the bottom — nothing that changes every turn should sit above something that never changes.",
+        blocks: [
+          { id: "c1", label: "The customer's latest message", sub: "new every turn", tag: "volatile" },
+          { id: "c2", label: "System role & studio operating rules", sub: "never changes", tag: "stable" },
+          { id: "c3", label: "Tool definitions", sub: "never changes", tag: "stable" },
+          { id: "c4", label: "Brand guide (retrieved reference)", sub: "stable for this job", tag: "stable" },
+          { id: "c5", label: "The conversation so far", sub: "grows each turn", tag: "volatile" },
+        ],
+        hint: "Durable first: role, tools, reference docs. Then the moving parts: the running conversation and the newest message.",
+        explanation:
+          "Put the durable layers first — who the agent is, what tools it has, the reference docs it needs — then the volatile turn-by-turn parts. A stable top reads cleaner for the model AND can be cached, while the parts that move stay at the bottom where they belong. It's the same lesson as prompt caching, one layer up.",
+      },
+      {
+        kind: "spot",
+        id: "ah-rot",
+        title: "Find what's rotting the context",
+        prompt:
+          "This agent has gotten slow and forgetful. One line is stuffing the context window with raw data it doesn't need loaded. Click it.",
+        lines: [
+          { id: "r1", text: "Task: re-render order #4471 in the new brand blue.", culprit: false },
+          { id: "r2", text: "Brand blue = #1E3A8A (brand guide §4).", culprit: false },
+          { id: "r3", text: "[Full 14,000-line render log from every past order pasted inline]", culprit: true },
+          { id: "r4", text: "File path: /orders/4471/spec.json — load if needed.", culprit: false },
+          { id: "r5", text: "Last status: awaiting re-render.", culprit: false },
+        ],
+        hint: "More tokens isn't more knowledge. Which line dumps a mountain of raw data the agent could fetch on demand instead?",
+        explanation:
+          "Context is a finite resource — as it fills with tokens, recall actually gets worse ('context rot'). Pasting a 14,000-line log inline buries the few facts that matter. The fix is just-in-time retrieval: keep a lightweight pointer (the file path on line 4) and let the agent load the detail only if it needs it. Store identifiers, not haystacks.",
+      },
+      {
+        kind: "categorize",
+        id: "ah-guard",
+        title: "Set the guardrails",
+        prompt:
+          "You're wiring the harness's permission rules. Sort each action into auto-allow or stop-for-approval.",
+        buckets: [
+          { id: "allow", label: "✓ Auto-allow (safe, reversible)" },
+          { id: "gate", label: "🛑 Require approval (risky / irreversible)" },
+        ],
+        items: [
+          { id: "g1", label: "Read an order file", bucket: "allow" },
+          { id: "g2", label: "Render a draft to a scratch folder", bucket: "allow" },
+          { id: "g3", label: "Email the client the final proof", bucket: "gate" },
+          { id: "g4", label: "Issue a refund", bucket: "gate" },
+          { id: "g5", label: "Search the web", bucket: "allow" },
+          { id: "g6", label: "Delete rows from the live orders table", bucket: "gate" },
+        ],
+        hint: "Reads and scratch work are safe to auto-allow. Anything touching money, clients, or live data should stop for a human.",
+        explanation:
+          "Guardrails in a harness are deterministic and enforced by your code, not left to the model's judgement. An allow-list auto-approves safe, reversible actions (reads, scratch renders, web search) so the agent keeps moving. Anything irreversible or outward-facing — money, client emails, live-data deletes — hits a gate: a check that pauses for human approval before it runs. More autonomy earns more guardrails, not fewer.",
+      },
+    ],
+  },
 ];
 
 export function getLab(slug: string): Lab | undefined {
