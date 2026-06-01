@@ -69,7 +69,8 @@ export default function Dashboard() {
           className={`dash-tab ${tab === "lessons" ? "active" : ""}`}
           onClick={() => setTab("lessons")}
         >
-          Lessons
+          Basic
+          <span className="dash-tab-count">{lessons.length}</span>
         </button>
         <button
           role="tab"
