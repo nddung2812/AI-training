@@ -260,6 +260,8 @@ export default function Dashboard() {
           <div className="lesson-grid">
             {labs.map((lab) => {
               const meta = getAdvancedLesson(lab.slug);
+              const tagline = lab.tagline ?? meta?.tagline ?? lab.whatYouDo;
+              const topics = lab.topics ?? meta?.topics ?? [];
               const result = progress[lab.slug];
               const done = Boolean(result);
               const perfect = result && result.score === result.total;
@@ -282,13 +284,11 @@ export default function Dashboard() {
                   </div>
 
                   <h2 className="card-title">{lab.title}</h2>
-                  <p className="card-tagline">
-                    {meta?.tagline ?? lab.whatYouDo}
-                  </p>
+                  <p className="card-tagline">{tagline}</p>
 
-                  {meta && (
+                  {topics.length > 0 && (
                     <div className="card-topics">
-                      {meta.topics.map((t) => (
+                      {topics.map((t) => (
                         <span key={t} className="topic-pill">
                           {t}
                         </span>

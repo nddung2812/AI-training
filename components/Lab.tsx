@@ -15,6 +15,10 @@ export default function LabView({ lab }: { lab: Lab }) {
   const [results, setResults] = useState<(boolean | undefined)[]>([]);
 
   const recap = getAdvancedLesson(lab.slug);
+  // Expert-only labs carry their own recap content; topics with a playbook
+  // borrow the advanced lesson's.
+  const recapActions = lab.actions ?? recap?.actions;
+  const recapSources = lab.sources ?? recap?.sources;
   const total = lab.exercises.length;
   const ex = lab.exercises[idx];
   const resolved = results[idx] !== undefined;
@@ -110,22 +114,22 @@ export default function LabView({ lab }: { lab: Lab }) {
             </ul>
           </div>
 
-          {recap?.actions && recap.actions.length > 0 && (
+          {recapActions && recapActions.length > 0 && (
             <div className="results-block actions-block">
               <h3>Try these this week</h3>
               <ul className="action-list">
-                {recap.actions.map((a) => (
+                {recapActions.map((a) => (
                   <li key={a}>{a}</li>
                 ))}
               </ul>
             </div>
           )}
 
-          {recap?.sources && recap.sources.length > 0 && (
+          {recapSources && recapSources.length > 0 && (
             <div className="results-block sources-block">
               <h3>Go deeper — reliable sources</h3>
               <ul className="source-list">
-                {recap.sources.map((s) => (
+                {recapSources.map((s) => (
                   <li key={s.url}>
                     <a href={s.url} target="_blank" rel="noopener noreferrer">
                       {s.label} <span className="ext">↗</span>

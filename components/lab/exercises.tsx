@@ -247,7 +247,7 @@ export function SpotEx({
           <div className="ex-controls">
             {wrong && (
               <span className="ex-inline-wrong">
-                Not quite — look for what changes on the very next call.
+                Not quite — look again at which line fits.
               </span>
             )}
             <div className="ex-btn-row">
@@ -330,8 +330,7 @@ export function CategorizeEx({
           <div className="ex-controls">
             {wrong && (
               <span className="ex-inline-wrong">
-                Some are in the wrong bucket — check anything that changes
-                between calls.
+                Some are in the wrong bucket — give it another look.
               </span>
             )}
             <div className="ex-btn-row">

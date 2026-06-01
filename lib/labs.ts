@@ -6,6 +6,8 @@
 // Exercises are a small set of reusable, data-driven primitives so new labs are
 // mostly content, not new components.
 
+import type { Source } from "./lessons";
+
 // ── Exercise primitives ──────────────────────────────────────────────────
 
 /** Drag/▲▼ a list into a valid order. Validity = no "volatile" block sits
@@ -75,16 +77,25 @@ export type LabExercise =
 export type KeyIdea = { term: string; point: string };
 
 export type Lab = {
-  /** Matches the advanced lesson slug, so the recap can reuse its content */
+  /** Matches an advanced lesson slug when one exists, so the recap can reuse
+   *  its content. Expert-only labs (no matching playbook) carry their own
+   *  tagline/topics/actions/sources below. */
   slug: string;
   title: string;
   icon: string;
   accent: [string, string];
+  /** Short hook for the Expert card (falls back to the advanced lesson's) */
+  tagline?: string;
+  /** Pills for the Expert card (falls back to the advanced lesson's) */
+  topics?: string[];
   /** One line: what you'll actually DO in this lab */
   whatYouDo: string;
   /** 3–4 quick concept cards — kept short on purpose */
   keyIdeas: KeyIdea[];
   exercises: LabExercise[];
+  /** Recap extras for Expert-only labs (fall back to the advanced lesson's) */
+  actions?: string[];
+  sources?: Source[];
 };
 
 // ── Lab catalogue ────────────────────────────────────────────────────────
@@ -298,6 +309,379 @@ export const labs: Lab[] = [
         explanation:
           "Guardrails in a harness are deterministic and enforced by your code, not left to the model's judgement. An allow-list auto-approves safe, reversible actions (reads, scratch renders, web search) so the agent keeps moving. Anything irreversible or outward-facing — money, client emails, live-data deletes — hits a gate: a check that pauses for human approval before it runs. More autonomy earns more guardrails, not fewer.",
       },
+    ],
+  },
+  {
+    slug: "agent-loop",
+    title: "The Agent Loop",
+    icon: "🔁",
+    accent: ["#22d3ee", "#3b82f6"],
+    tagline:
+      "Why a reliable agent takes a step, checks the result, and adjusts — instead of guessing a whole job in one shot.",
+    topics: ["The loop", "Act & observe", "Verify"],
+    whatYouDo:
+      "Walk the loop yourself: sort the moves into gather / act / verify, catch the run that shipped without checking, decide when a job needs the loop at all, and react to the result that should change the plan.",
+    keyIdeas: [
+      {
+        term: "Gather → act → verify → repeat",
+        point:
+          "An agent runs a cycle: pull the context it needs, take one action, check what happened, then go again. That cycle is the whole trick.",
+      },
+      {
+        term: "Observe before the next step",
+        point:
+          "Every action returns a result. The agent reads it and decides the next move from reality, not from a guess made up front.",
+      },
+      {
+        term: "Verify is a step, not an afterthought",
+        point:
+          "Checking the work against the goal lives inside the loop — that's what catches a mistake before it ships.",
+      },
+      {
+        term: "One shot is a hope",
+        point:
+          "A five-step job answered blind in a single reply can't see its own errors. The loop is what makes multi-step work reliable.",
+      },
+    ],
+    exercises: [
+      {
+        kind: "categorize",
+        id: "al-phase",
+        title: "Which part of the loop is this?",
+        prompt:
+          "Every move an agent makes is gathering context, taking an action, or verifying. Sort each one.",
+        buckets: [
+          { id: "gather", label: "🔍 Gather context" },
+          { id: "act", label: "⚙️ Take an action" },
+          { id: "verify", label: "✅ Verify" },
+        ],
+        items: [
+          { id: "p1", label: "Read the order #4471 spec file", bucket: "gather" },
+          { id: "p2", label: "Render the square to a draft", bucket: "act" },
+          { id: "p3", label: "Compare the draft against the brief", bucket: "verify" },
+          { id: "p4", label: "Look up the brand blue hex in the guide", bucket: "gather" },
+          { id: "p5", label: "Email the approved proof to the client", bucket: "act" },
+          { id: "p6", label: "Re-check every spec line was met", bucket: "verify" },
+        ],
+        hint: "Reading or looking something up = gather. Doing something that changes the world = act. Checking the result against the goal = verify.",
+        explanation:
+          "The loop only has three kinds of move. Gathering pulls in what the agent needs to decide. Acting changes something — renders a file, sends a mail. Verifying holds the result up against the goal. A good harness keeps cycling through all three; skip verifying and mistakes sail straight through.",
+      },
+      {
+        kind: "spot",
+        id: "al-skip",
+        title: "Find where it skipped a step",
+        prompt:
+          "This run shipped a flawed proof. Click the single step where the agent acted on the outside world without first checking its work.",
+        lines: [
+          { id: "s1", text: "Read order #4471 spec.", culprit: false },
+          { id: "s2", text: "Pulled the brand blue from the guide.", culprit: false },
+          { id: "s3", text: "Rendered the square to a draft.", culprit: false },
+          { id: "s4", text: "Emailed the draft straight to the client. (no check against the brief)", culprit: true },
+          { id: "s5", text: "Logged 'done'.", culprit: false },
+        ],
+        hint: "Which line pushes something out to a client with no verify step in front of it?",
+        explanation:
+          "The agent went render → email with no verification in between, so an off-brief draft reached the client. Verifying isn't optional polish — it's the loop step that sits between acting and shipping. Anything outward-facing should never be the step right after a blind action.",
+      },
+      {
+        kind: "categorize",
+        id: "al-need",
+        title: "One shot, or run the loop?",
+        prompt:
+          "Some jobs are a single clean answer. Others need the agent to act, look, and adjust. Sort them.",
+        buckets: [
+          { id: "shot", label: "💬 Fine as one shot" },
+          { id: "loop", label: "🔁 Needs the loop" },
+        ],
+        items: [
+          { id: "n1", label: "What's 7 × 7?", bucket: "shot" },
+          { id: "n2", label: "Re-render 200 orders in the new blue, fixing any that fail", bucket: "loop" },
+          { id: "n3", label: "Define 'orchestrator' in one sentence", bucket: "shot" },
+          { id: "n4", label: "Debug why the render pipeline crashes on some files", bucket: "loop" },
+          { id: "n5", label: "Translate this tagline into French", bucket: "shot" },
+          { id: "n6", label: "Migrate the whole catalog, checking each item", bucket: "loop" },
+        ],
+        hint: "If you can't know the answer is right without trying something and seeing what happens, it needs the loop.",
+        explanation:
+          "A single fact or a clean transform is fine in one shot — there's nothing to observe. But anything that spans multiple steps, can partly fail, or depends on results you can't predict needs the act-observe loop. Reaching for the loop on a one-shot task is wasted motion; skipping it on a multi-step job is how things break.",
+      },
+      {
+        kind: "spot",
+        id: "al-react",
+        title: "Spot the result that changes the plan",
+        prompt:
+          "The agent just got back four tool results. Click the one it must react to before doing anything else.",
+        lines: [
+          { id: "r1", text: "Read spec ✓", culprit: false },
+          { id: "r2", text: "Fetched brand guide ✓", culprit: false },
+          { id: "r3", text: "Render failed: required font 'StudioSans' is missing.", culprit: true },
+          { id: "r4", text: "Saved draft path /orders/4471/draft.png ✓", culprit: false },
+        ],
+        hint: "Three results say 'all good.' One says 'stop — something's broken.'",
+        explanation:
+          "Observing means actually reading the results, not just collecting them. The failed render is a signal to change course — fix the missing font before proceeding — not a line to skim past. An agent that doesn't react to what its tools report is running blind, even with the loop technically in place.",
+      },
+    ],
+    actions: [
+      "Take one multi-step task you do by hand and rewrite it as gather → act → verify, with a check after each action.",
+      "Next time an agent gives a flaky one-shot answer, ask it to work one step at a time and show its result at each step.",
+      "Add an explicit 'check it against the brief' step before anything you'd actually send to a client.",
+    ],
+    sources: [
+      { label: "Anthropic — Building effective agents", url: "https://www.anthropic.com/engineering/building-effective-agents" },
+      { label: "Anthropic — Building agents with the Claude Agent SDK", url: "https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk" },
+      { label: "ReAct: Synergizing Reasoning and Acting in Language Models", url: "https://arxiv.org/abs/2210.03629" },
+    ],
+  },
+  {
+    slug: "sub-agents",
+    title: "Sub-agents & Isolation",
+    icon: "🧩",
+    accent: ["#10b981", "#22d3ee"],
+    tagline:
+      "Why one lead agent that delegates to focused specialists beats a single agent trying to hold everything.",
+    topics: ["Orchestrator", "Specialists", "Isolation"],
+    whatYouDo:
+      "Run the studio like an orchestrator: route each subtask to the right specialist, decide what crosses the isolation boundary, catch the sub-agent that dumped instead of summarized, and judge when a job is worth splitting up.",
+    keyIdeas: [
+      {
+        term: "Orchestrator + workers",
+        point:
+          "A lead agent breaks a big job into pieces and hands each to a specialist built for it — then assembles the results.",
+      },
+      {
+        term: "Each works in isolation",
+        point:
+          "A sub-agent gets its own context window, so it can dig deep without cluttering the lead agent or the others.",
+      },
+      {
+        term: "Return a summary, not the haystack",
+        point:
+          "A sub-agent might read tens of thousands of tokens, but it reports back a tight 1–2 paragraph answer — the finding, not the search.",
+      },
+      {
+        term: "Specialists beat a generalist",
+        point:
+          "A focused agent with the right tools and a clean context outperforms one agent juggling research, doing, and checking all at once.",
+      },
+    ],
+    exercises: [
+      {
+        kind: "categorize",
+        id: "sa-route",
+        title: "Route each subtask to a specialist",
+        prompt:
+          "The lead agent is splitting a big custom order across three sub-agents. Send each subtask to the right one.",
+        buckets: [
+          { id: "research", label: "🔎 Research agent" },
+          { id: "render", label: "🖼️ Render agent" },
+          { id: "qa", label: "🧪 QA agent" },
+        ],
+        items: [
+          { id: "r1", label: "Find 3 reference squares in the archive", bucket: "research" },
+          { id: "r2", label: "Produce the final PNG at four sizes", bucket: "render" },
+          { id: "r3", label: "Check the output matches the brief", bucket: "qa" },
+          { id: "r4", label: "Pull this client's past preferences", bucket: "research" },
+          { id: "r5", label: "Re-export with the corrected blue", bucket: "render" },
+          { id: "r6", label: "Flag anything off-brand before it ships", bucket: "qa" },
+        ],
+        hint: "Finding/looking up → research. Producing the artifact → render. Checking quality → QA.",
+        explanation:
+          "Orchestrator-workers means the lead agent doesn't do the work itself — it delegates to specialists. Each one has a narrow job, the right tools, and its own clean context, so it does that job better than a single agent trying to research, render, and review all at once.",
+      },
+      {
+        kind: "categorize",
+        id: "sa-boundary",
+        title: "What crosses back to the lead?",
+        prompt:
+          "The research agent explored a lot. Decide what it sends back to the lead agent versus what stays inside its own context.",
+        buckets: [
+          { id: "back", label: "📤 Send back to the lead" },
+          { id: "stays", label: "🗄️ Stays inside the sub-agent" },
+        ],
+        items: [
+          { id: "b1", label: "\"Use reference #3 — it matches the brief (2 lines why).\"", bucket: "back" },
+          { id: "b2", label: "The 40 archive files it opened while searching", bucket: "stays" },
+          { id: "b3", label: "The final chosen reference + one-line reason", bucket: "back" },
+          { id: "b4", label: "Every dead-end search it tried", bucket: "stays" },
+          { id: "b5", label: "\"Done — 4 sizes exported, all pass.\"", bucket: "back" },
+          { id: "b6", label: "The raw 12,000-token render log", bucket: "stays" },
+        ],
+        hint: "The lead only needs the answer and why. The messy exploration that produced it should stay behind.",
+        explanation:
+          "Isolation is the point: a sub-agent can burn tens of thousands of tokens exploring, but only a tight summary crosses back. If it dumped everything it read into the lead agent's context, you'd lose the whole benefit — the lead would drown in detail and slow down. Return the conclusion, keep the haystack.",
+      },
+      {
+        kind: "spot",
+        id: "sa-dump",
+        title: "Catch the sub-agent that over-shared",
+        prompt:
+          "Three sub-agents just reported to the lead. Click the one that broke the rule and dumped its raw work instead of a summary.",
+        lines: [
+          { id: "d1", text: "Research agent → \"Ref #3 matches; here's why (3 lines).\"", culprit: false },
+          { id: "d2", text: "Render agent → \"Exported 4 sizes, all pass.\"", culprit: false },
+          { id: "d3", text: "QA agent → [pasted all 14,000 lines of its raw check log]", culprit: true },
+          { id: "d4", text: "Lead agent → assembles the three reports.", culprit: false },
+        ],
+        hint: "Two reports are a sentence or two. One is a firehose.",
+        explanation:
+          "The QA agent returned its entire raw log instead of a verdict, flooding the lead agent's context — exactly what isolation is meant to prevent. The fix is a disciplined hand-off: 'pass/fail, and here's the one issue.' A sub-agent's value is that it digests the detail so no one else has to.",
+      },
+      {
+        kind: "categorize",
+        id: "sa-split",
+        title: "One agent, or split into specialists?",
+        prompt:
+          "Splitting into sub-agents adds power but also overhead. Sort each job by whether it's worth it.",
+        buckets: [
+          { id: "one", label: "🙂 Fine for one agent" },
+          { id: "split", label: "🧩 Split into specialists" },
+        ],
+        items: [
+          { id: "x1", label: "Answer one quick question about an order", bucket: "one" },
+          { id: "x2", label: "Audit 500 past orders for off-brand colors", bucket: "split" },
+          { id: "x3", label: "Draft a single quote", bucket: "one" },
+          { id: "x4", label: "Research + render + QA a whole new catalog", bucket: "split" },
+          { id: "x5", label: "Rename one file", bucket: "one" },
+          { id: "x6", label: "Migrate the archive while checking each item", bucket: "split" },
+        ],
+        hint: "Small and single-step → one agent. Big, multi-part, or parallel → split it up.",
+        explanation:
+          "Sub-agents shine when a job is large, has distinct parts, or benefits from parallel specialists. For a quick single-step task, spinning up an orchestrator and workers is pure overhead — one agent is faster and simpler. Match the structure to the size of the job.",
+      },
+    ],
+    actions: [
+      "Take a big task and split it: name 2–3 specialist roles (research, do, check) instead of one mega-prompt.",
+      "When you delegate, ask for a short summary back — the answer and why — not the whole transcript.",
+      "Notice when one chat is juggling too much at once; that's the signal to break it into focused sub-tasks.",
+    ],
+    sources: [
+      { label: "Anthropic — Building agents with the Claude Agent SDK (sub-agents)", url: "https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk" },
+      { label: "Anthropic — Effective context engineering for AI agents", url: "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents" },
+      { label: "Anthropic — Building effective agents (orchestrator-workers)", url: "https://www.anthropic.com/engineering/building-effective-agents" },
+    ],
+  },
+  {
+    slug: "workflows-vs-agents",
+    title: "Workflows vs Agents",
+    icon: "⚙️",
+    accent: ["#f59e0b", "#fb923c"],
+    tagline:
+      "Predefined path or dynamic agent? Pick the right pattern — and know when NOT to hand over the wheel.",
+    topics: ["Workflows", "Agents", "5 patterns"],
+    whatYouDo:
+      "Make the architecture call: sort jobs into fixed workflows vs open-ended agents, match each to one of the classic patterns, catch the over-engineered design, and find the one step that actually needs judgment.",
+    keyIdeas: [
+      {
+        term: "Workflow = a path you set",
+        point:
+          "LLM steps wired together in code you control. Same route every time — predictable, testable, cheap.",
+      },
+      {
+        term: "Agent = directs itself",
+        point:
+          "The model decides its own steps and which tools to use. Flexible for open-ended work, but less predictable.",
+      },
+      {
+        term: "Simplest thing that works",
+        point:
+          "Don't hand the wheel to a full agent when a fixed path does the job. More autonomy is more to go wrong.",
+      },
+      {
+        term: "Know the patterns",
+        point:
+          "Routing, parallelization, orchestrator-workers, evaluator-optimizer — most real systems are one of these, not magic.",
+      },
+    ],
+    exercises: [
+      {
+        kind: "categorize",
+        id: "wa-which",
+        title: "Workflow or agent?",
+        prompt:
+          "For each job, decide whether a fixed workflow (same steps every time) or a self-directing agent fits better.",
+        buckets: [
+          { id: "workflow", label: "🛤️ Fixed workflow" },
+          { id: "agent", label: "🤖 Dynamic agent" },
+        ],
+        items: [
+          { id: "w1", label: "Every order: validate → render → email proof, same steps", bucket: "workflow" },
+          { id: "w2", label: "Investigate why some renders fail and fix them", bucket: "agent" },
+          { id: "w3", label: "Translate each incoming review into English", bucket: "workflow" },
+          { id: "w4", label: "Plan and run a one-off catalog migration", bucket: "agent" },
+          { id: "w5", label: "Tag each ticket by topic, then route it", bucket: "workflow" },
+          { id: "w6", label: "\"Improve our quoting however you can\"", bucket: "agent" },
+        ],
+        hint: "If you can write the exact steps in advance, it's a workflow. If the steps depend on what's found along the way, it's an agent.",
+        explanation:
+          "A workflow runs LLM calls through a path you defined in code — predictable and easy to trust. An agent decides its own steps as it goes — the right call only when the path genuinely can't be known up front. Most production work is workflows; reach for an agent when the task is open-ended.",
+      },
+      {
+        kind: "categorize",
+        id: "wa-pattern",
+        title: "Match the pattern",
+        prompt:
+          "These are the classic ways to wire LLM work together. Match each setup to its pattern.",
+        buckets: [
+          { id: "routing", label: "🔀 Routing" },
+          { id: "parallel", label: "🧵 Parallelization" },
+          { id: "orchestrator", label: "🎯 Orchestrator-workers" },
+          { id: "evaluator", label: "🔁 Evaluator-optimizer" },
+        ],
+        items: [
+          { id: "m1", label: "Billing questions go to the billing prompt, design Qs to the design prompt", bucket: "routing" },
+          { id: "m2", label: "Render all 200 squares at once, then collect the results", bucket: "parallel" },
+          { id: "m3", label: "A lead splits a custom job across specialists and merges their work", bucket: "orchestrator" },
+          { id: "m4", label: "Draft → a reviewer scores it against the brief → revise → repeat", bucket: "evaluator" },
+          { id: "m5", label: "Classify each support email, then send it down the matching track", bucket: "routing" },
+          { id: "m6", label: "One agent writes, another keeps critiquing until it passes", bucket: "evaluator" },
+        ],
+        hint: "Routing = send to the right place. Parallel = many at once. Orchestrator = split & merge. Evaluator = draft-and-critique loop.",
+        explanation:
+          "Naming the pattern keeps designs simple. Routing classifies then sends down a track. Parallelization fans the same work out at once. Orchestrator-workers splits a job across specialists and recombines. Evaluator-optimizer loops a maker against a checker until the output passes. Reach for the simplest pattern that fits.",
+      },
+      {
+        kind: "spot",
+        id: "wa-over",
+        title: "Spot the over-engineering",
+        prompt:
+          "One of these reaches for a full autonomous agent where a simple fixed path would be safer and cheaper. Click it.",
+        lines: [
+          { id: "o1", text: "Quick FAQ reply → a fixed prompt template.", culprit: false },
+          { id: "o2", text: "Same 3-step proof pipeline every order → wired as a workflow.", culprit: false },
+          { id: "o3", text: "Stamp today's date on a file → a self-directing agent with 12 tools and web access.", culprit: true },
+          { id: "o4", text: "Open-ended catalog migration → an agent.", culprit: false },
+        ],
+        hint: "Which task is trivial and fixed, yet got handed the most powerful, least predictable tool?",
+        explanation:
+          "Stamping a date is a one-line, fully predictable job — handing it an autonomous agent adds cost, latency, and ways to fail, for zero benefit. The principle is the simplest thing that works: use a fixed path for fixed jobs, and save agents for work whose steps truly can't be scripted.",
+      },
+      {
+        kind: "spot",
+        id: "wa-judgment",
+        title: "Find the step that needs judgment",
+        prompt:
+          "This quoting pipeline is mostly fixed steps. Click the one step that genuinely needs an agent's judgment — leave the rest as plain workflow.",
+        lines: [
+          { id: "j1", text: "1. Validate the order is in the right format.", culprit: false },
+          { id: "j2", text: "2. Look up each item's price from the price sheet.", culprit: false },
+          { id: "j3", text: "3. Handle a weird non-standard custom request that isn't on the sheet.", culprit: true },
+          { id: "j4", text: "4. Email the finished quote to the client (after approval).", culprit: false },
+        ],
+        hint: "Three steps follow exact rules. One has no rule to follow — it needs reasoning.",
+        explanation:
+          "Workflows and agents compose: keep the predictable steps as fixed code and drop an agent in only at the step that needs reasoning — here, pricing a one-off custom request with no sheet entry. You get the reliability of a workflow everywhere it counts and the flexibility of an agent exactly where you need it, not across the whole pipeline.",
+      },
+    ],
+    actions: [
+      "For one repeatable job, wire a fixed workflow (the same steps every time) instead of trusting an open-ended agent.",
+      "Before reaching for a full agent, ask: would a simple predefined path do this more reliably?",
+      "Find the one uncertain step in a process and let an agent handle just that — keep the rest fixed.",
+    ],
+    sources: [
+      { label: "Anthropic — Building effective agents (workflows, agents & the 5 patterns)", url: "https://www.anthropic.com/engineering/building-effective-agents" },
+      { label: "Anthropic — Building agents with the Claude Agent SDK", url: "https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk" },
     ],
   },
 ];
