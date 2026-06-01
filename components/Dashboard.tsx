@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { lessons } from "@/lib/lessons";
-import { advancedLessons } from "@/lib/advanced";
-import { hasLab } from "@/lib/labs";
+import { advancedLessons, getAdvancedLesson } from "@/lib/advanced";
+import { labs } from "@/lib/labs";
 import { loadProgress, type ProgressMap } from "@/lib/progress";
 
-type Tab = "lessons" | "advanced";
+type Tab = "lessons" | "advanced" | "expert";
 
 export default function Dashboard() {
   const [progress, setProgress] = useState<ProgressMap>({});
@@ -16,9 +16,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     setProgress(loadProgress());
-    // Let a ?tab=advanced link (e.g. the back-link from a playbook) land here.
+    // Let a ?tab=advanced / ?tab=expert link (e.g. a back-link) land here.
     const params = new URLSearchParams(window.location.search);
-    if (params.get("tab") === "advanced") setTab("advanced");
+    const t = params.get("tab");
+    if (t === "advanced" || t === "expert") setTab(t);
   }, []);
 
   const completed = lessons.filter((l) => progress[l.slug]).length;
@@ -81,9 +82,18 @@ export default function Dashboard() {
           Advanced
           <span className="dash-tab-count">{advancedLessons.length}</span>
         </button>
+        <button
+          role="tab"
+          aria-selected={tab === "expert"}
+          className={`dash-tab ${tab === "expert" ? "active" : ""}`}
+          onClick={() => setTab("expert")}
+        >
+          Expert
+          <span className="dash-tab-count">{labs.length}</span>
+        </button>
       </div>
 
-      {tab === "lessons" ? (
+      {tab === "lessons" && (
         <div className="lesson-grid">
           {lessons.map((lesson) => {
             const result = progress[lesson.slug];
@@ -157,22 +167,20 @@ export default function Dashboard() {
             </p>
           </div>
         </div>
-      ) : (
+      )}
+
+      {tab === "advanced" && (
         <>
           <p className="dash-tab-intro">
-            Past the basics? Topics marked{" "}
-            <span className="inline-lab">🧪 Hands-on lab</span> drop you straight
-            into doing the work — ordering a real prompt, hunting a cache-buster,
-            dialing in the savings — with instant feedback. The rest are quick
-            concept playbooks while their labs get built.
+            Past the basics? Quick concept playbooks for practitioners — each one
+            a five-minute game that ends with practical actions to try this week
+            and reliable sources to go deeper.
           </p>
           <div className="lesson-grid">
             {advancedLessons.map((topic) => {
               const result = progress[topic.slug];
               const done = Boolean(result);
               const perfect = result && result.score === result.total;
-              const lab = hasLab(topic.slug);
-              const exerciseCount = result?.total;
               return (
                 <Link
                   key={topic.slug}
@@ -185,10 +193,6 @@ export default function Dashboard() {
                     } as React.CSSProperties
                   }
                 >
-                  {lab && (
-                    <span className="card-lab">🧪 Hands-on lab</span>
-                  )}
-
                   <div className="card-top">
                     <span className="card-icon">{topic.icon}</span>
                     <span className="card-order">{topic.order}</span>
@@ -209,17 +213,9 @@ export default function Dashboard() {
                     <div className="card-meta">
                       <span>{topic.level}</span>
                       <span className="dot">·</span>
-                      {lab ? (
-                        <span>
-                          {exerciseCount ?? 4} exercises
-                        </span>
-                      ) : (
-                        <>
-                          <span>{topic.durationMin} min</span>
-                          <span className="dot">·</span>
-                          <span>{topic.scenarios.length} scenarios</span>
-                        </>
-                      )}
+                      <span>{topic.durationMin} min</span>
+                      <span className="dot">·</span>
+                      <span>{topic.scenarios.length} scenarios</span>
                     </div>
                     {done ? (
                       <span className={`card-badge ${perfect ? "perfect" : ""}`}>
@@ -232,14 +228,7 @@ export default function Dashboard() {
                   </div>
 
                   <div className="card-cta">
-                    {lab
-                      ? done
-                        ? "Replay lab"
-                        : "Start lab"
-                      : done
-                        ? "Replay playbook"
-                        : "Play playbook"}{" "}
-                    →
+                    {done ? "Replay playbook" : "Play playbook"} →
                   </div>
                 </Link>
               );
@@ -254,6 +243,90 @@ export default function Dashboard() {
                 Evals, sub-agent orchestration, MCP connectors and more land here
                 as the studio levels up. Got an advanced topic in mind? Suggest
                 it.
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+
+      {tab === "expert" && (
+        <>
+          <p className="dash-tab-intro">
+            The deep end. <span className="inline-lab">🧪 Hands-on labs</span>{" "}
+            drop you straight into doing the work — ordering a real prompt,
+            hunting a cache-buster, stacking a context window, setting guardrails
+            — with instant feedback on every move.
+          </p>
+          <div className="lesson-grid">
+            {labs.map((lab) => {
+              const meta = getAdvancedLesson(lab.slug);
+              const result = progress[lab.slug];
+              const done = Boolean(result);
+              const perfect = result && result.score === result.total;
+              return (
+                <Link
+                  key={lab.slug}
+                  href={`/expert/${lab.slug}`}
+                  className="lesson-card advanced-card"
+                  style={
+                    {
+                      "--accent-a": lab.accent[0],
+                      "--accent-b": lab.accent[1],
+                    } as React.CSSProperties
+                  }
+                >
+                  <span className="card-lab">🧪 Hands-on lab</span>
+
+                  <div className="card-top">
+                    <span className="card-icon">{lab.icon}</span>
+                  </div>
+
+                  <h2 className="card-title">{lab.title}</h2>
+                  <p className="card-tagline">
+                    {meta?.tagline ?? lab.whatYouDo}
+                  </p>
+
+                  {meta && (
+                    <div className="card-topics">
+                      {meta.topics.map((t) => (
+                        <span key={t} className="topic-pill">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="card-footer">
+                    <div className="card-meta">
+                      <span>Expert</span>
+                      <span className="dot">·</span>
+                      <span>{lab.exercises.length} exercises</span>
+                    </div>
+                    {done ? (
+                      <span className={`card-badge ${perfect ? "perfect" : ""}`}>
+                        {perfect ? "★ " : "✓ "}
+                        Best {result!.score}/{result!.total}
+                      </span>
+                    ) : (
+                      <span className="card-badge new">Not started</span>
+                    )}
+                  </div>
+
+                  <div className="card-cta">
+                    {done ? "Replay lab" : "Start lab"} →
+                  </div>
+                </Link>
+              );
+            })}
+
+            <div className="lesson-card coming-soon">
+              <div className="card-top">
+                <span className="card-icon">✨</span>
+              </div>
+              <h2 className="card-title">More labs coming</h2>
+              <p className="card-tagline">
+                Each Advanced playbook earns a hands-on lab over time. Want a
+                specific one built next? Suggest it.
               </p>
             </div>
           </div>

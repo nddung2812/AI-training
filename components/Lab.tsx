@@ -52,8 +52,8 @@ export default function LabView({ lab }: { lab: Lab }) {
   if (stage === "learn") {
     return (
       <div className="lab" style={style}>
-        <Link href="/?tab=advanced" className="back-link">
-          ← Advanced track
+        <Link href="/?tab=expert" className="back-link">
+          ← Expert labs
         </Link>
         <div className="lab-eyebrow">Hands-on lab · {total} exercises</div>
         <div className="lab-hero">
@@ -140,8 +140,8 @@ export default function LabView({ lab }: { lab: Lab }) {
             <button className="start-btn" onClick={restart}>
               Run it again →
             </button>
-            <Link href="/?tab=advanced" className="btn-back">
-              ← Advanced track
+            <Link href="/?tab=expert" className="btn-back">
+              ← Expert labs
             </Link>
           </div>
         </div>
@@ -154,7 +154,7 @@ export default function LabView({ lab }: { lab: Lab }) {
   return (
     <div className="lab" style={style}>
       <div className="q-topbar">
-        <Link href="/?tab=advanced" className="q-close" aria-label="Advanced track">
+        <Link href="/?tab=expert" className="q-close" aria-label="Expert labs">
           ✕
         </Link>
         <div className="progress">
