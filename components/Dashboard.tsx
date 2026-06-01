@@ -31,15 +31,15 @@ export default function Dashboard() {
     <div className="dashboard">
       <header className="dash-header">
         <Image
-          src="/logo.png"
-          alt="Square Drawing Co."
-          width={72}
-          height={72}
+          src="/drawinghub-logo.png"
+          alt="DrawingHub"
+          width={84}
+          height={84}
           className="dash-logo"
           priority
         />
-        <div className="dash-brand">DRAWINGHUB · AI TRAINING</div>
-        <h1 className="dash-title">Square Drawing Co. Academy</h1>
+        <div className="dash-brand">DrawingHub · AI Training</div>
+        <h1 className="dash-title">DrawingHub AI Academy</h1>
         <p className="dash-sub">
           Bite-sized, playful lessons that turn AI buzzwords into things you can
           actually use at work. Pick a lesson and play — about five minutes each.

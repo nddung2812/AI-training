@@ -153,20 +153,25 @@ export default function Game({
   const s = scenarios[current];
   const alreadyAnswered = answers[current] !== undefined;
   const chosen = answers[current];
-  const progress = (current / scenarios.length) * 100;
+  const progress = ((current + (alreadyAnswered ? 1 : 0)) / scenarios.length) * 100;
+  const gotIt = alreadyAnswered && s.options[chosen!].correct;
+  // Hearts: start at 5, lose one per wrong answer so far (purely for the vibe).
+  const wrongSoFar = answers.filter(
+    (a, i) => a !== undefined && !scenarios[i].options[a].correct
+  ).length;
+  const hearts = Math.max(0, 5 - wrongSoFar);
 
   return (
     <div className="game">
-      <div className="game-header">
-        <Link href={backHref} className="logo logo-link">
-          ← {lesson.title.toUpperCase()}
+      <div className="q-topbar">
+        <Link href={backHref} className="q-close" aria-label={backLabel}>
+          ✕
         </Link>
-        <div className="score-label">
-          Question {current + 1} of {scenarios.length} · Score {score}
+        <div className="progress">
+          <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
-      </div>
-      <div className="progress">
-        <div className="progress-fill" style={{ width: `${progress}%` }} />
+        <span className="q-xp">⚡ {score}</span>
+        <span className="q-hearts">❤️ {hearts}</span>
       </div>
 
       <div dangerouslySetInnerHTML={{ __html: s.animation }} />
@@ -196,8 +201,10 @@ export default function Game({
       </div>
 
       {alreadyAnswered && (
-        <div className="feedback">
-          <div className="label">What this teaches</div>
+        <div className={`feedback ${gotIt ? "" : "incorrect"}`}>
+          <div className="label">
+            {gotIt ? "✅ Nice — that's it" : "💡 What this teaches"}
+          </div>
           <div className="concept">{s.concept}</div>
           <div>{s.explanation}</div>
         </div>
@@ -215,7 +222,7 @@ export default function Game({
           <button className="btn-primary" onClick={nextQ}>
             {current === scenarios.length - 1
               ? "See results →"
-              : "Next question →"}
+              : "Continue →"}
           </button>
         )}
       </div>

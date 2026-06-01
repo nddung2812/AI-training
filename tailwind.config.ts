@@ -10,6 +10,9 @@ const config: Config = {
   theme: {
     container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-nunito)", "system-ui", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -43,6 +46,19 @@ const config: Config = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        // Duolingo-style palette
+        duo: {
+          green: "#58cc02",
+          greenDark: "#58a700",
+          blue: "#1cb0f5",
+          blueDark: "#1899d6",
+          red: "#ff4b4b",
+          redDark: "#ea2b2b",
+          yellow: "#ffc800",
+          ink: "#3c3c3c",
+          gray: "#777777",
+          line: "#e5e5e5",
         },
         dh: {
           purple: "#a855f7",

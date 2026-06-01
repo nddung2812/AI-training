@@ -153,16 +153,14 @@ export default function LabView({ lab }: { lab: Lab }) {
   const progress = (idx / total) * 100;
   return (
     <div className="lab" style={style}>
-      <div className="game-header">
-        <Link href="/?tab=advanced" className="logo logo-link">
-          ← {lab.title.toUpperCase()} · LAB
+      <div className="q-topbar">
+        <Link href="/?tab=advanced" className="q-close" aria-label="Advanced track">
+          ✕
         </Link>
-        <div className="score-label">
-          Exercise {idx + 1} of {total} · Solved {score}
+        <div className="progress">
+          <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
-      </div>
-      <div className="progress">
-        <div className="progress-fill" style={{ width: `${progress}%` }} />
+        <span className="q-xp">⚡ {score}</span>
       </div>
 
       {ex.kind === "order" && (
