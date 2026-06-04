@@ -684,6 +684,141 @@ export const labs: Lab[] = [
       { label: "Anthropic — Building agents with the Claude Agent SDK", url: "https://www.anthropic.com/engineering/building-agents-with-the-claude-agent-sdk" },
     ],
   },
+
+  // ── Dynamic Workflows (Claude Code) ──────────────────────────────────
+  // The feature itself: one script Claude writes that drives many subagents
+  // in the background. Sibling to "workflows-vs-agents" (the concept); this
+  // one is the hands-on "how you actually run it in Claude Code" lab.
+  {
+    slug: "dynamic-workflows",
+    title: "Dynamic Workflows",
+    icon: "🧩",
+    accent: ["#14b8a6", "#0ea5e9"],
+    tagline:
+      "One script, hundreds of subagents, running in the background. Codify the orchestration once — then read it, rerun it, and save it.",
+    topics: ["Orchestration", "Subagents at scale", "ultracode"],
+    whatYouDo:
+      "Decide when a job is big enough to script out, pick the right way to launch it, catch the step that would stall the run mid-flight, and tell how a workflow really behaves from the myths.",
+    keyIdeas: [
+      {
+        term: "The script holds the plan",
+        point:
+          "A dynamic workflow is a JavaScript script Claude writes to drive subagents. The loop, the branching, and the in-between results live in the script — your context gets only the final answer.",
+      },
+      {
+        term: "When it's worth it",
+        point:
+          "Reach for one when a task needs more agents than one chat can coordinate, or when you want the orchestration as a script you can rerun: repo-wide sweeps, big migrations, cross-checked research, a plan drafted from several angles.",
+      },
+      {
+        term: "Launch it your way",
+        point:
+          "/deep-research for a question · the keyword ultracode (or just “use a workflow”) for one task · /effort ultracode to let Claude decide all session · a saved /command to rerun one you kept.",
+      },
+      {
+        term: "Background, with guardrails",
+        point:
+          "Up to 16 agents at once, 1,000 per run. No mid-run questions and no direct file access from the script — agents do that. Resumable in the same session, and it spends real tokens, so test on a slice first.",
+      },
+    ],
+    exercises: [
+      {
+        kind: "categorize",
+        id: "dw-when",
+        title: "Workflow, or stay in the conversation?",
+        prompt:
+          "A dynamic workflow shines when work is big or needs codified orchestration. For each job at Square Drawing Co., decide whether to script it as a workflow or just handle it in one chat.",
+        buckets: [
+          { id: "workflow", label: "🧩 Dynamic workflow" },
+          { id: "chat", label: "💬 One conversation" },
+        ],
+        items: [
+          { id: "dw1", label: "Sweep all 480 product pages for missing alt-text and fix each", bucket: "workflow" },
+          { id: "dw2", label: "Audit every API route under src/routes for missing auth checks", bucket: "workflow" },
+          { id: "dw3", label: "Research “what changed in shipping rules across 5 states”, cross-checking sources", bucket: "workflow" },
+          { id: "dw4", label: "Rename one function and update its 3 call sites", bucket: "chat" },
+          { id: "dw5", label: "Explain what the 80-line file open on screen does", bucket: "chat" },
+          { id: "dw6", label: "Fix the single failing test you're looking at right now", bucket: "chat" },
+        ],
+        hint: "If it needs more agents than one chat can coordinate — or you'd want to rerun the orchestration — it's a workflow. If a couple of steps in your current context finish it, stay in the chat.",
+        explanation:
+          "Workflows earn their cost at scale: repo-wide sweeps, large migrations, and research that cross-checks sources across many fetches. A rename, a quick explanation, or a single-test fix is a few steps in your existing context — spinning up dozens of agents just adds tokens and latency.",
+      },
+      {
+        kind: "categorize",
+        id: "dw-launch",
+        title: "How do you launch it?",
+        prompt:
+          "There are four ways to start a workflow. Match each situation to the right one.",
+        buckets: [
+          { id: "deepresearch", label: "🔎 /deep-research" },
+          { id: "keyword", label: "⌨️ ultracode keyword" },
+          { id: "effort", label: "🎚️ /effort ultracode" },
+          { id: "saved", label: "💾 Saved /command" },
+        ],
+        items: [
+          { id: "l1", label: "Investigate a question across many web sources, get one cited report", bucket: "deepresearch" },
+          { id: "l2", label: "Just this one task — audit every endpoint — then back to normal effort", bucket: "keyword" },
+          { id: "l3", label: "One-off: “use a workflow to migrate the catalog”", bucket: "keyword" },
+          { id: "l4", label: "For the rest of this session, let Claude orchestrate whatever it judges worth it", bucket: "effort" },
+          { id: "l5", label: "Rerun the branch-review orchestration you saved last week", bucket: "saved" },
+          { id: "l6", label: "Run /triage-issues again on issues 1024 and 1025", bucket: "saved" },
+        ],
+        hint: "Bundled question-answerer vs. a one-prompt opt-in (a keyword or plain words) vs. a whole-session switch vs. replaying something you kept.",
+        explanation:
+          "/deep-research is the built-in workflow for a question. The ultracode keyword — or asking in your own words, like “use a workflow” — turns a single prompt into a workflow without changing your effort. /effort ultracode hands Claude the call for every substantive task all session. And a workflow you saved runs as its own /command, optionally taking input via args.",
+      },
+      {
+        kind: "spot",
+        id: "dw-stall",
+        title: "Find the step that stalls the run",
+        prompt:
+          "A workflow runs start-to-finish in the background — it can't stop to ask you anything mid-flight. Click the one phase that assumes it can.",
+        lines: [
+          { id: "s1", text: "Phase 1: fan out 12 agents to scan each module for dead code.", culprit: false },
+          { id: "s2", text: "Phase 2: pause and ask Randall which findings to keep before continuing.", culprit: true },
+          { id: "s3", text: "Phase 3: a second set of agents adversarially verify the survivors.", culprit: false },
+          { id: "s4", text: "Phase 4: synthesize one report and return it to the session.", culprit: false },
+        ],
+        hint: "Only an agent's own permission prompt can pause a run. Which phase waits on a human decision in the middle?",
+        explanation:
+          "A workflow takes no mid-run user input — only an agent's permission prompt can pause it. If you need sign-off between stages, run each stage as its own workflow and decide in between. The rest here is exactly what workflows do well: fan out, then have independent agents cross-check the findings before anything is reported.",
+      },
+      {
+        kind: "categorize",
+        id: "dw-myth",
+        title: "Sort the fact from the myth",
+        prompt:
+          "You're about to kick off a big run. Sort what's actually true about how a workflow behaves from the myths.",
+        buckets: [
+          { id: "true", label: "✅ True" },
+          { id: "myth", label: "❌ Myth" },
+        ],
+        items: [
+          { id: "t1", label: "Stop a run and resume it in the same session — finished agents return cached results", bucket: "true" },
+          { id: "t2", label: "Only the final answer lands in your context; the in-between results stay in script variables", bucket: "true" },
+          { id: "t3", label: "The script just coordinates — agents do all the reading, writing, and running", bucket: "true" },
+          { id: "t4", label: "Quit Claude Code mid-run and it keeps going; you rejoin the same run later", bucket: "myth" },
+          { id: "t5", label: "A workflow always costs less than doing the task in one conversation", bucket: "myth" },
+          { id: "t6", label: "The script reads and edits files directly, no agents needed", bucket: "myth" },
+        ],
+        hint: "Resume is same-session only. A workflow spawns many agents. And the script itself has no filesystem or shell access.",
+        explanation:
+          "True: runs are resumable within the same session (completed agents return cached results), your context only ever sees the final answer, and the script merely orchestrates. Myths: exiting Claude Code starts the workflow fresh next time, a multi-agent run usually spends more tokens than one conversation (so gauge it on a small slice first), and the script can't touch files itself — agents do every read, write, and command.",
+      },
+    ],
+    actions: [
+      "Run /deep-research on a real question you'd otherwise spend an hour googling, then read the cited report it returns.",
+      "Take one repo-wide chore (alt-text, missing auth checks, a rename across hundreds of files) and prefix your prompt with “ultracode” to have Claude script it.",
+      "Before a big run, point it at one directory first and watch the token count in /workflows — then decide whether to run the whole thing.",
+      "When a workflow does exactly what you wanted, open /workflows and press “s” to save it as a /command you can rerun on every branch.",
+    ],
+    sources: [
+      { label: "Claude Code docs — Orchestrate subagents at scale with dynamic workflows", url: "https://code.claude.com/docs/en/workflows" },
+      { label: "Claude Code docs — Create custom subagents", url: "https://code.claude.com/docs/en/sub-agents" },
+      { label: "Anthropic — Building effective agents", url: "https://www.anthropic.com/engineering/building-effective-agents" },
+    ],
+  },
 ];
 
 export function getLab(slug: string): Lab | undefined {
